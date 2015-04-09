@@ -17,8 +17,8 @@
 
 
 /**
- * FauxTimeline is a manager of many Animation player instances. It is useful
- * for scheduling and scrubbing a collection of players and related callbacks.
+ * FauxTimeline is a manager of many Animation instances. It is useful for
+ * scheduling and scrubbing a collection of animations and related callbacks.
  *
  * The timeline emulates the Animation interface, but is not intended to
  * completely implement it. It supports the playbackRate and currentTime
