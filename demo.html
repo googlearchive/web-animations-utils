@@ -1,0 +1,216 @@
+<!--
+Copyright 2015 Google Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,400,400italic,500,500italic" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.rawgit.com/web-animations/web-animations-js/2.0.0/web-animations.min.js"></script>
+  <script src="timeline.js"></script>
+  <style type="text/css">
+
+body {
+  font-family: "Roboto", Arial, Sans-Serif;
+}
+
+.holder {
+  position: relative;
+  display: inline-block;
+  margin: 12px;
+}
+
+.holder > span {
+  color: #333;
+  will-change: transform;
+  font-size: 24px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.flex {
+  display: -webkit-flex;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+input[type="range"] {
+  min-width: 80%;
+}
+
+  </style>
+</head>
+<body>
+
+<div class="flex" id="main">
+  <h1>Web Animations Utilities</h1>
+  <button id="start">Play/Pause</button>
+  <input type="range" min="0" max="10000" value="0" id="ranger" />
+</div>
+
+<script>
+
+var timeline = new FauxTimeline();
+timeline.playbackRate = 0;
+
+document.getElementById('start').addEventListener('click', function() {
+  if (timeline.playbackRate == 0) {
+    timeline.playbackRate = 1;
+  } else {
+    timeline.playbackRate = 0;
+  }
+});
+
+var rangerChange = function(ev) {
+  if (ev.type == 'mousemove' && ev.which == 0) {
+    return; // don't change unless mouse button is down
+  }
+  timeline.playbackRate = 0;
+  timeline.currentTime = +this.value;
+};
+window.setInterval(function() {
+  if (timeline.playbackRate != 0) {
+    ranger.value = timeline.currentTime;
+  }
+}, 50);
+ranger.addEventListener('click', rangerChange);
+ranger.addEventListener('change', rangerChange);
+ranger.addEventListener('mousemove', rangerChange);
+
+
+/** 
+ * Creates a div containing text split into parts (each as a span), default
+ * by whitespace.
+ *
+ * @param {string} text to use
+ * @param {string=} opt_splitBy to split by
+ * @return {!HTMLDivElement}
+ */
+function createHolder(text, opt_splitBy) {
+  var splitBy = opt_splitBy || /\s+/;
+
+  var holder = document.createElement('div');
+  holder.className = 'holder';
+
+  text.split(splitBy).map(function(part) {
+    var node = document.createElement('span');
+    node.innerText = part + ' ';
+    holder.appendChild(node);
+    holder.appendChild(document.createTextNode(' '));
+  });
+
+  return holder;
+}
+
+/**
+ * Schedules an animation on the passed timeline at a delta. Accepts the same
+ * arguments as the schedule call on timeline.
+ */
+var schedule = (function(timeline) {
+  var scheduleAt = 0;
+  return function(delta, node, steps, timing) {
+    scheduleAt += delta;
+    if (node == undefined) {
+      return;  // do nothing, hack to move scheduleAt
+    }
+    return timeline.schedule(scheduleAt, node, steps, timing);
+  }
+}(timeline));
+
+/**
+ * Invokes the passed function on every child of the passed Element.
+ */
+var htmlEach = function(el, fn) {
+  Array.prototype.slice.call(el.children).forEach(fn);
+};
+
+function effectFadeZoomIn(node) {
+  var steps = [
+    {transform: 'translate(0, -20px) scale(2.0)', opacity: 0},
+    {transform: 'translate(0) scale(1)', opacity: 1},
+  ];
+  var timing = {
+    duration: 750,
+    fill: 'backwards',
+    easing: 'ease-out',
+  };
+  schedule(250, node, steps, timing);
+}
+
+function effectFadeFlipOut(node) {
+  var fadeLeftSteps = [
+    {transform: 'perspective(400px)', opacity: 1, offset: 0},
+    {transform: 'perspective(400px) rotate3d(1, 0, 0, -20deg)', opacity: 1, offset: 0.3},
+    {transform: 'perspective(400px) rotate3d(1, 0, 0, 90deg)', opacity: 0, offset: 1}
+  ];
+  var fadeLeftTiming = {
+    duration: 2000,
+    easing: 'ease-out',
+    fill: 'forwards',
+  };
+  schedule(250, node, fadeLeftSteps, fadeLeftTiming);
+}
+
+function effectZoomOut(node) {
+  var fadeLeftSteps = [
+    {transform: 'scale(1)', opacity: 1},
+    {transform: 'scale(2)', opacity: 0},
+  ];
+  var fadeLeftTiming = {
+    duration: 2000,
+    easing: 'ease-in',
+    fill: 'forwards',
+  };
+  schedule(250, node, fadeLeftSteps, fadeLeftTiming);
+}
+
+function effectRotateIn(node) {
+  var keyframes = [{transform: 'rotate3d(0, 0, 1, 30deg)', opacity: 0, transformOrigin: 'center bottom', offset: 0}, 
+    {transform: 'none', opacity: 1, transformOrigin: 'center bottom', offset: 1}];
+  var timing = {duration: 450, fill: 'backwards'};
+  schedule(1000, node, keyframes, timing);
+}
+
+// Actual effect script below here.
+
+var lines = [
+  "Use Web Animations to make HTML5 rock!",
+  "In Chrome 39+, these animations are 100% GPU-bound",
+  "[...] defines a model for supporting animation and synchronization on the Web platform.",
+];
+var h = lines.map(function(text) {
+  var el = createHolder(text); 
+  main.appendChild(el);
+  return el;
+});
+
+htmlEach(h[0], effectFadeZoomIn);
+
+effectRotateIn(h[1]);
+
+schedule(500);
+
+effectFadeZoomIn(h[2]);
+
+effectFadeFlipOut(h[1]);
+htmlEach(h[2], effectZoomOut);
+
+effectFadeFlipOut(h[0]);
+
+</script>
+
+</body>
+</html>
