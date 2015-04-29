@@ -8,12 +8,12 @@ For more information, see the [specification](https://w3c.github.io/web-animatio
 
 ### Timeline
 
-The [timeline library](timeline.js) is a manager of many `Animation` player instances, and is useful for scheduling and scrubbing a collection of animations and related callbacks.
+The [timeline library](timeline.js) provides a manager of many `Animation` player instances, and is useful for scheduling and scrubbing a collection of animations and related callbacks.
 
 It is supported natively on Chrome 39+, and requires the [web-animations](https://github.com/web-animations/web-animations-js#web-animationsminjs) polyfill on other, modern browsers.
 
 ```js
-var timeline = new FauxTimeline();
+var timeline = new AnimationUtilTimeline();
 
 var element = ...;
 var steps = [{transform: 'translate(0)'}, {transform: 'translate(1000px)'}];
