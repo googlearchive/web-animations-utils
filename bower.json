@@ -1,0 +1,19 @@
+{
+  "name": "web-animations-utils",
+  "homepage": "https://github.com/GoogleChrome/web-animations-utils",
+  "description": "utility libraries for Web Animations",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "animations"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
