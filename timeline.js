@@ -17,8 +17,9 @@
 
 
 /**
- * FauxTimeline is a manager of many Animation instances. It is useful for
- * scheduling and scrubbing a collection of animations and related callbacks.
+ * AnimationUtilTimeline is a manager of many Animation instances. It is useful
+ * for scheduling and scrubbing a collection of animations and related
+ * callbacks.
  *
  * The timeline emulates the Animation interface, but is not intended to
  * completely implement it. It supports the playbackRate and currentTime
@@ -29,9 +30,9 @@
  *
  * @constructor
  */
-var FauxTimeline = function() {
+var AnimationUtilTimeline = function() {
   if (!('animate' in Element.prototype)) {
-    throw new Error('FauxTimeline expects Web Animations support');
+    throw new Error('AnimationUtilTimeline expects Web Animations support');
   }
 
   var timing = {duration: 1000, iterations: Infinity};
@@ -62,19 +63,21 @@ var FauxTimeline = function() {
   this.calls_ = [];
 
   /**
-   * Works around issues in some WA implementations. Changing the playbackRate
-   * of an Animation can cause its currentTime to become invalid (null or
-   * undefined). In this case, store the currentTime here before the change.
+   * Changing the playbackRate of an Animation can cause its currentTime to
+   * become invalid, as its underlying state must be resolved outside a normal
+   * browser tick. In this case, store the currentTime from before the change,
+   * so that a non-null value is always available.
    * @type {number}
    * @private
    */
   this.localTime_ = 0;
 };
 
-FauxTimeline.prototype = {
+AnimationUtilTimeline.prototype = {
 
   /**
-   * Hints to this FauxTimeline that it should run any pending calls.
+   * Hints to this AnimationUtilTimeline that it should run any pending calls,
+   * which will occur synchronously on this thread.
    * @private
    */
   hintAtCall_: function() {
@@ -120,7 +123,7 @@ FauxTimeline.prototype = {
     });
 
     if (seekForward) {
-      // For now, we can't trigger calls in the past.
+      // For now, this does not trigger calls in the past.
       this.hintAtCall_();
     }
   },
@@ -138,11 +141,11 @@ FauxTimeline.prototype = {
   },
 
   /**
-   * Schedule an animation on this FauxTimeline.
+   * Schedule an animation on this AnimationUtilTimeline.
    *
    * @param {number} when to start the animation, may be in the past
    * @param {!Element} el to animate
-   * @param {!Array<!Object>} steps of the animation
+   * @param {!Array<*>} steps of the animation
    * @param {number|!Object} timing to run for
    * @return {!Animation}
    */
@@ -158,18 +161,15 @@ FauxTimeline.prototype = {
   },
 
   /**
-   * Call a function at an absolute time. This must be in the future (even if
-   * the playbackRate is negative), and the call will be cleared once it has
-   * been invoked.
+   * Request that a function be called at an absolute time, including in the
+   * past. However, the function will only be called when playbackRate is +ve.
+   * The call will be removed from this timeline once it has been invoked.
    *
-   * @param {number} when to call, must be past currentTime
+   * @param {number} when to call
    * @param {!Function} fn to invoke
    */
   call: function(when, fn) {
     var now = this.currentTime;
-    if (when < now) {
-      throw new Error('FauxTimeline doesn\'t support calls in past: ' + (now - when));
-    }
 
     // Insert into the calls list, maintaining sort order.
     // TODO: binary search would be faster.
@@ -187,33 +187,35 @@ FauxTimeline.prototype = {
   },
 
   /**
-   * Removes a previously registered animation via its AnimationPlayer.
+   * Removes and cancels a previously registered animation via its Animation.
    *
-   * @param {!Animation=} opt_player to remove, undefined for all
+   * @param {Animation} player to remove
    */
-  remove: function(opt_player) {
-    if (opt_player === undefined) {
-      this.players_.forEach(function(p) { p.anim.cancel(); });
-      this.players_ = [];
-      this.calls_ = [];
-      return;
+  remove: function(player) {
+    if (!('cancel' in player)) {
+      throw new Error('AnimationUtilTimeline remove expects Animation, was: ' + opt_player);
     }
-
-    if (!('cancel' in opt_player)) {
-      throw new Error('FauxTimeline remove expects Animation, was: ' + opt_player);
-    }
-    opt_player.cancel();
 
     var i;
     for (i = 0; i < this.players_.length; ++i) {
-      var player = this.players_[i];
-      if (player.anim == opt_player) {
+      var cand = this.players_[i];
+      if (cand.anim == player) {
+        player.cancel();
         break;
       }
     }
-    this.players_.splice(index, 1);
+    this.players_.splice(i, 1);
+  },
+
+  /**
+   * Removes and cancels all players and calls from this timeline.
+   */
+  removeAll: function() {
+    this.players_.forEach(function(p) { p.anim.cancel(); });
+    this.players_ = [];
+    this.calls_ = [];
   }
 
 };
 
-window["FauxTimeline"] = FauxTimeline;
+window["AnimationUtilTimeline"] = AnimationUtilTimeline;
