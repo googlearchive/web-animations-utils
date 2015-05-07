@@ -10,7 +10,7 @@ For more information, see the [specification](https://w3c.github.io/web-animatio
 
 The [timeline library](timeline.js) provides a manager of many `Animation` player instances, and is useful for scheduling and scrubbing a collection of animations and related callbacks.
 
-It is supported natively on Chrome 39+, and requires the [web-animations](https://github.com/web-animations/web-animations-js#web-animationsminjs) polyfill on other, modern browsers.
+It is supported natively on Chrome 39+, and requires the [web-animations][js] polyfill on other, modern browsers.
 
 ```js
 var timeline = new AnimationUtilTimeline();
@@ -28,6 +28,29 @@ timeline.call(250 + 750, function() {
 });
 ```
 
+### Props
+
+The [props library](props.js) provides helpers to apply inline CSS properties after an animation has completed. It builds handlers to add to the `finish` event on an `Animation`.
+
+It is supported natively on Chrome 39+, and requires the [web-animations][js] polyfill on other, modern browsers.
+
+```js
+var element = ...;
+var steps = [{transform: 'translate(0)'}, {transform: 'translate(1000px)'}];
+var anim = element.animate(steps, 1000);
+
+anim.addEventListener('finish', AnimationUtilApply(steps, element));
+````
+
+It also supports the advanced polyfill features in [web-animations-next][js-next], such as `KeyframeEffect`, `GroupEffect` and `SequenceEffect`
+
+```js
+var effect = new KeyframeEffect(target, steps);
+var group = new GroupEffect([effect, ...]);
+var anim = document.timeline.play(group);
+anim.addEventListener('finish', AnimationUtilApply(effect));
+````
+
 ### Externs
 
 Externs can be used inside the [Closure Compiler](https://developers.google.com/closure/compiler) to hint at functions provided outside a project's code base, such as third-party libraries or for upcoming APIs such as Web Animations.
@@ -41,3 +64,5 @@ java -jar compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS \
 ```
 
 [polyfill]: https://github.com/web-animations/web-animations-js
+[js]: https://github.com/web-animations/web-animations-js#web-animationsminjs
+[js-next]: https://github.com/web-animations/web-animations-js#web-animations-nextminjs
