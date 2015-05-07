@@ -16,7 +16,7 @@ specific language governing permissions and limitations under the License.
 <html>
 <head>
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,400,400italic,500,500italic" rel="stylesheet" type="text/css" />
-  <script src="https://cdn.rawgit.com/web-animations/web-animations-js/2.0.0/web-animations-next.min.js"></script>
+  <script src="https://cdn.rawgit.com/web-animations/web-animations-js/2.0.0/web-animations.min.js"></script>
   <script src="props.js"></script>
   <style type="text/css">
 
@@ -53,11 +53,10 @@ function diff(a, b) {
 start.addEventListener('click', function() {
   var t = document.getElementById('boxy');
   var steps = [
-    {'background': 'green'},
-    {'background': 'blue'}
+    {'backgroundColor': 'green'},
+    {'backgroundColor': 'blue'}
   ];
   var p = t.animate(steps, {duration: 2 * 1000});
-
   p.addEventListener('finish', AnimationUtilApply(steps, t));
 });
 
