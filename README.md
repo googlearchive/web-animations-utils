@@ -49,6 +49,11 @@ var effect = new KeyframeEffect(target, steps);
 var group = new GroupEffect([effect, ...]);
 var anim = document.timeline.play(group);
 anim.addEventListener('finish', AnimationUtilApply(effect));
+
+// Or the AnimationUtilApplyHandler is supported where Animation exposes
+// its effect property correctly: the handler below is equivalent to passing
+// `anim.effect` to the base helper.
+anim.addEventListener('finish', AnimationUtilApplyHandler);
 ````
 
 ### Externs

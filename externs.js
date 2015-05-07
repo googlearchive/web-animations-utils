@@ -19,7 +19,9 @@
 /**
  * @constructor
  */
-var Animation = function() {};
+var Animation = function() {
+  /** @public {AnimationEffectReadOnly} */ this.effect;
+};
 
 /**
  * @param {string} event

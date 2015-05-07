@@ -17,8 +17,8 @@
 
 /**
  * Translates the given argument into a function that applies its final state
- * as CSS properties. This can apply to a single target (if specified, or as
- * part of a KeyframeEffect) or many (if a sequence is specified).
+ * as inline CSS properties. This can apply to a single target (if specified,
+ * or as part of a KeyframeEffect) or many (if a sequence is specified).
  *
  * @param {!Array<*>|!AnimationEffectReadOnly} anim to parse, not cloned
  * @param {!Element=} opt_target required if not inferred from anim
@@ -50,13 +50,13 @@ function AnimationUtilApply(anim, opt_target) {
 
   var n = 'AnimationUtilApply';
   if (anim instanceof Function) {
-    throw new Exception(n + ' does not support EffectCallback syntax');
+    throw new Error(n + ' does not support EffectCallback syntax');
   }
   if (anim.length === undefined) {
-    throw new Exception(n + ' expected Array or effect');
+    throw new Error(n + ' expected Array or effect');
   }
   if (!target) {
-    throw new Exception(n + ' can\'t resolve target');
+    throw new Error(n + ' can\'t resolve target');
   }
   if (!anim.length) {
     return AnimationUtilApply.noop;  // unusual, but valid - no keyframes
@@ -72,8 +72,26 @@ function AnimationUtilApply(anim, opt_target) {
 }
 
 /**
+ * Used directly as a finish handler on an Animation (aka, the this object),
+ * and will apply the underlying effect's final keyframes as inline CSS.
+ *
+ * @this {!Animation}
+ */
+function AnimationUtilApplyHandler() {
+  if (this.effect === undefined) {
+    throw new Error('AnimationUtilApplyHandler can\'t apply, no effect');
+  }
+  if (this.effect) {
+    console.info('applying handler to', this, this.effect);
+    var fn = AnimationUtilApply(this.effect);
+    fn();
+  }
+}
+
+/**
  * Helper function that is intentionally empty.
  */
 AnimationUtilApply.noop = function() {}
 
 window["AnimationUtilApply"] = AnimationUtilApply;
+window["AnimationUtilApplyHandler"] = AnimationUtilApplyHandler;
