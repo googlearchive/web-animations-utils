@@ -20,7 +20,7 @@
  * as CSS properties. This can apply to a single target (if specified, or as
  * part of a KeyframeEffect) or many (if a sequence is specified).
  *
- * @param {!Array<*>|!AnimationEffectReadOnly} anim
+ * @param {!Array<*>|!AnimationEffectReadOnly} anim to parse, not cloned
  * @param {!Element=} opt_target required if not inferred from anim
  * @return {!Function} that applies the final state
  */
@@ -48,11 +48,15 @@ function AnimationUtilApply(anim, opt_target) {
     anim = anim.getFrames();
   }
 
+  var n = 'AnimationUtilApply';
+  if (anim instanceof Function) {
+    throw new Exception(n + ' does not support EffectCallback syntax');
+  }
   if (anim.length === undefined) {
-    throw new Exception('AnimationUtilApply expected Array or effect');
+    throw new Exception(n + ' expected Array or effect');
   }
   if (!target) {
-    throw new Exception('AnimationUtilApply can\'t resolve target');
+    throw new Exception(n + ' can\'t resolve target');
   }
   if (!anim.length) {
     return AnimationUtilApply.noop;  // unusual, but valid - no keyframes
