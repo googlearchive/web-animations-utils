@@ -37,3 +37,21 @@ Animation.prototype.cancel = function() {};
  * @return {!Animation}
  */
 Element.prototype.animate = function(steps, timing) {};
+
+/**
+ * @constructor
+ */
+var AnimationEffectReadOnly = function() {};
+
+/**
+ * @constructor
+ * @extends {AnimationEffectReadOnly}
+ */
+var KeyframeEffectReadOnly = function() {
+  /** @public {Element} */ this.target;
+};
+
+/**
+ * @return {!Array<!Object>}
+ */
+KeyframeEffectReadOnly.prototype.getFrames = function() {};
