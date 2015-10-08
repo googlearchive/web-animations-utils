@@ -15,6 +15,11 @@
  */
 
 
+/**
+ * @fileoverview Basic externs for the Web Animations API.
+ * @externs
+ */
+
 
 /**
  * @constructor
