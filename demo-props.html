@@ -56,8 +56,8 @@ start.addEventListener('click', function() {
     {'backgroundColor': 'green'},
     {'backgroundColor': 'blue'}
   ];
-  var p = t.animate(steps, {duration: 2 * 1000});
-  p.addEventListener('finish', AnimationUtilApply(steps, t));
+  t.animate(steps, {duration: 2 * 1000});
+	AnimationUtilApply(steps, t);
 });
 
 </script>

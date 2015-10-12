@@ -16,82 +16,58 @@
 
 
 /**
- * Translates the given argument into a function that applies its final state
- * as inline CSS properties. This can apply to a single target (if specified,
- * or as part of a KeyframeEffect) or many (if a sequence is specified).
+ * Applies the final state of the passed animation as inline CSS properties.
+ * This can apply to a single target (if specified, or as part of a
+ * KeyframeEffect) or many (if a sequence is specified).
+ *
+ * Due to the limitations of some browsers, the final state will be applied
+ * using rAF (it won't be immediately visible when this function returns).
  *
  * @param {!Array<*>|!AnimationEffectReadOnly} anim to parse, not cloned
  * @param {!Element=} opt_target required if not inferred from anim
- * @return {!Function} that applies the final state
  */
 function AnimationUtilApply(anim, opt_target) {
+	var me = arguments.callee;
   if (anim.children && anim.children.length !== undefined) {
-    var all = anim.children.map(function(x) {
-      return AnimationUtilApply(x, opt_target);
+		anim.children.forEach(function(each) {
+      me(each, opt_target);
     });
-    return function() {
-      all.map(function(x) {
-        x();
-      });
-    }
+		return;
   }
 
   var target = opt_target || null;
 
-  // Check for MotionEffect, which has a target.
+  // Check for KeyframeEffect, which has a target.
   if (anim.target !== undefined) {
     if (target && anim.target != target) {
-      // Can't apply to this target, it's not within the filter.
-      return AnimationUtilApply.noop;
+      return;  // can't apply to this target, not selected
     }
     target = anim.target;
     anim = anim.getFrames();
   }
 
-  var n = 'AnimationUtilApply';
   if (anim instanceof Function) {
-    throw new Error(n + ' does not support EffectCallback syntax');
-  }
-  if (anim.length === undefined) {
-    throw new Error(n + ' expected Array or effect');
-  }
-  if (!target) {
-    throw new Error(n + ' can\'t resolve target');
-  }
-  if (!anim.length) {
-    return AnimationUtilApply.noop;  // unusual, but valid - no keyframes
+    throw new Error(me.name + ' does not support EffectCallback syntax');
+  } else if (anim.length === undefined) {
+    throw new Error(me.name + ' expected Array or effect');
+  } else if (!target) {
+    throw new Error(me.name + ' can\'t resolve target');
+  } else if (!anim.length) {
+    return;  // unusual, but valid - no keyframes
   }
 
   var last = anim[anim.length - 1];
-  return function() {
+
+	// NOTE: This works around bad implementations of requestAnimationFrame in
+	// many browsers. The spec says that rAF must be called before any layout
+	// or style recalc is done; however, as of Oct 2015, Safari, Firefox (among
+	// others) will sometimes layout before this.
+ 	window.requestAnimationFrame(function() {
     var s = target.style;
     for (var x in last) {
       s[x] = last[x];
     }
-  }
+	});
 }
-
-/**
- * Used directly as a finish handler on an Animation (aka, the this object),
- * and will apply the underlying effect's final keyframes as inline CSS.
- *
- * @this {!Animation}
- */
-function AnimationUtilApplyHandler() {
-  if (this.effect === undefined) {
-    throw new Error('AnimationUtilApplyHandler can\'t apply, no effect');
-  }
-  if (this.effect) {
-    console.info('applying handler to', this, this.effect);
-    var fn = AnimationUtilApply(this.effect);
-    fn();
-  }
-}
-
-/**
- * Helper function that is intentionally empty.
- */
-AnimationUtilApply.noop = function() {}
 
 window["AnimationUtilApply"] = AnimationUtilApply;
-window["AnimationUtilApplyHandler"] = AnimationUtilApplyHandler;

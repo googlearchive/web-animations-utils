@@ -30,7 +30,7 @@ timeline.call(250 + 750, function() {
 
 ### Props
 
-The [props library](props.js) provides helpers to apply inline CSS properties after an animation has completed. It builds handlers to add to the `finish` event on an `Animation` that apply the final keyframe values seen.
+The [props library](props.js) provides a helper to apply the final state of the passed animation as inline CSS properties.
 
 It is supported natively on Chrome 39+, and requires the [web-animations][js] polyfill on other, modern browsers.
 
@@ -38,8 +38,7 @@ It is supported natively on Chrome 39+, and requires the [web-animations][js] po
 var element = ...;
 var steps = [{transform: 'translate(0)'}, {transform: 'translate(1000px)'}];
 var anim = element.animate(steps, 1000);
-
-anim.addEventListener('finish', AnimationUtilApply(steps, element));
+AnimationUtilApply(steps, element);
 ````
 
 It also supports the advanced polyfill features in [web-animations-next][js-next], such as `KeyframeEffect`, `GroupEffect` and `SequenceEffect`.
@@ -48,12 +47,7 @@ It also supports the advanced polyfill features in [web-animations-next][js-next
 var effect = new KeyframeEffect(target, steps);
 var group = new GroupEffect([effect, ...]);
 var anim = document.timeline.play(group);
-anim.addEventListener('finish', AnimationUtilApply(effect));
-
-// Or the AnimationUtilApplyHandler is supported where Animation exposes
-// its effect property correctly: the handler below is equivalent to passing
-// `anim.effect` to the base helper.
-anim.addEventListener('finish', AnimationUtilApplyHandler);
+AnimationUtilApply(group);
 ````
 
 ### Externs
