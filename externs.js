@@ -16,30 +16,41 @@
 
 
 /**
- * @fileoverview Basic externs for the Web Animations API.
+ * @fileoverview Basic externs for the Web Animations API. This is not
+ * intended to be exhaustive.
  * @externs
  */
 
 
 /**
  * @constructor
+ * @implements {EventTarget}
  */
-var Animation = function() {
-  /** @public {AnimationEffectReadOnly} */ this.effect;
+var Animation = function() {};
+
+// Stub out EventTarget so that Closure is confident Animation implements it.
+Animation.prototype = {
+	addEventListener: function() {},
+	removeEventListener: function() {},
+	dispatchEvent: function() {},
 };
 
 /**
- * @param {string} event
- * @param {!Function} fn
- */
-Animation.prototype.addEventListener = function(event, fn) {};
-
-/**
+ * @return {undefined}
  */
 Animation.prototype.cancel = function() {};
 
+/** @type {AnimationEffectReadOnly|undefined} */
+Animation.prototype.effect;
+
+/** @type {number} */
+Animation.prototype.currentTime;
+
+/** @type {string} */
+Animation.prototype.playState;
+
 /**
- * @param {!Array<*>} steps
+ * @param {!Array<!Object>} steps
  * @param {number|!Object} timing
  * @return {!Animation}
  */
@@ -54,11 +65,12 @@ var AnimationEffectReadOnly = function() {};
  * @constructor
  * @extends {AnimationEffectReadOnly}
  */
-var KeyframeEffectReadOnly = function() {
-  /** @public {Element} */ this.target;
-};
+var KeyframeEffectReadOnly = function() {};
 
 /**
  * @return {!Array<!Object>}
  */
 KeyframeEffectReadOnly.prototype.getFrames = function() {};
+
+/** @type {Element} */
+KeyframeEffectReadOnly.prototype.target;
