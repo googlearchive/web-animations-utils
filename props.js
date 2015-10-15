@@ -23,12 +23,23 @@
  * Due to the limitations of some browsers, the final state will be applied
  * using rAF (it won't be immediately visible when this function returns).
  *
- * @param {!Array<*>|!AnimationEffectReadOnly} anim to parse, not cloned
+ * @param {!Array<*>|!AnimationEffectReadOnly|!Animation} anim to parse
  * @param {!Element=} opt_target required if not inferred from anim
  */
 function AnimationUtilApply(anim, opt_target) {
   var me = AnimationUtilApply; // nb: arguments.callee not allowed in strict
-  if (anim.children && anim.children.length !== undefined) {
+  if (!anim) {
+    throw new Error(me.name + ' requires non-null anim');
+  }
+
+  // Search for an Animation instance.
+  if ('currentTime' in anim && 'effect' in anim) {
+    var player = /** @type {!Animation} */ (anim);
+    anim = player.effect;
+  }
+
+  // Search for a GroupEffect or SequenceEffect.
+  if ('children' in anim && anim.children.length !== undefined) {
     anim.children.forEach(function(each) {
       me(each, opt_target);
     });
@@ -47,14 +58,10 @@ function AnimationUtilApply(anim, opt_target) {
     anim = ke.getFrames();
   }
 
-  if (anim instanceof Function) {
-    throw new Error(me.name + ' does not support EffectCallback syntax');
-  } else if (anim.length === undefined) {
-    throw new Error(me.name + ' expected Array or effect');
-  } else if (!target) {
+  if (!target) {
     throw new Error(me.name + ' can\'t resolve target');
-  } else if (!anim.length) {
-    return;  // unusual, but valid - no keyframes
+  } else if (!anim || !anim.length) {
+    throw new Error(me.name + ' has no keyframes');
   }
 
   var last = anim[anim.length - 1];
