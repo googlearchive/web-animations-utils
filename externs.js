@@ -21,19 +21,18 @@
  * @externs
  */
 
+/**
+ * @param {!Array<!Object>} frames
+ * @param {undefined|number|!AnimationEffectTiming} opt_options
+ * @return {!Animation}
+ */
+Element.prototype.animate = function(frames, opt_options) {};
 
 /**
- * @constructor
- * @implements {EventTarget}
+ * @interface
+ * @extends {EventTarget}
  */
 var Animation = function() {};
-
-// Stub out EventTarget so that Closure is confident Animation implements it.
-Animation.prototype = {
-	addEventListener: function() {},
-	removeEventListener: function() {},
-	dispatchEvent: function() {},
-};
 
 /**
  * @return {undefined}
@@ -50,27 +49,30 @@ Animation.prototype.currentTime;
 Animation.prototype.playState;
 
 /**
- * @param {!Array<!Object>} steps
- * @param {number|!Object} timing
- * @return {!Animation}
+ * @interface
  */
-Element.prototype.animate = function(steps, timing) {};
+var AnimationEffectTiming = function() {};
 
-/**
- * @constructor
- */
-var AnimationEffectReadOnly = function() {};
+/** @type {number} */
+AnimationEffectTiming.prototype.delay;
 
-/**
- * @constructor
- * @extends {AnimationEffectReadOnly}
- */
-var KeyframeEffectReadOnly = function() {};
+/** @type {number} */
+AnimationEffectTiming.prototype.endDelay;
 
-/**
- * @return {!Array<!Object>}
- */
-KeyframeEffectReadOnly.prototype.getFrames = function() {};
+/** @type {string} */
+AnimationEffectTiming.prototype.fillMode;
 
-/** @type {Element} */
-KeyframeEffectReadOnly.prototype.target;
+/** @type {number} */
+AnimationEffectTiming.prototype.iterationStart;
+
+/** @type {number} */
+AnimationEffectTiming.prototype.iterations;
+
+/** @type {number|string} */
+AnimationEffectTiming.prototype.duration;
+
+/** @type {string} */
+AnimationEffectTiming.prototype.direction;
+
+/** @type {string} */
+AnimationEffectTiming.prototype.easing;
