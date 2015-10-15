@@ -27,23 +27,24 @@
  * @param {!Element=} opt_target required if not inferred from anim
  */
 function AnimationUtilApply(anim, opt_target) {
-	var me = arguments.callee;
+  var me = AnimationUtilApply; // nb: arguments.callee not allowed in strict
   if (anim.children && anim.children.length !== undefined) {
-		anim.children.forEach(function(each) {
+    anim.children.forEach(function(each) {
       me(each, opt_target);
     });
-		return;
+    return;
   }
 
   var target = opt_target || null;
 
   // Check for KeyframeEffect, which has a target.
-  if (anim.target !== undefined) {
-    if (target && anim.target != target) {
+  var ke = /** @type {!KeyframeEffect} */ (anim);
+  if (ke.target !== undefined) {
+    if (target && ke.target != target) {
       return;  // can't apply to this target, not selected
     }
-    target = anim.target;
-    anim = anim.getFrames();
+    target = ke.target;
+    anim = ke.getFrames();
   }
 
   if (anim instanceof Function) {
@@ -58,16 +59,16 @@ function AnimationUtilApply(anim, opt_target) {
 
   var last = anim[anim.length - 1];
 
-	// NOTE: This works around bad implementations of requestAnimationFrame in
-	// many browsers. The spec says that rAF must be called before any layout
-	// or style recalc is done; however, as of Oct 2015, Safari, Firefox (among
-	// others) will sometimes layout before this.
- 	window.requestAnimationFrame(function() {
+  // NOTE: This works around bad implementations of requestAnimationFrame in
+  // many browsers. The spec says that rAF must be called before any layout
+  // or style recalc is done; however, as of Oct 2015, Safari, Firefox (among
+  // others) will sometimes layout before this.
+   window.requestAnimationFrame(function() {
     var s = target.style;
     for (var x in last) {
       s[x] = last[x];
     }
-	});
+  });
 }
 
 window["AnimationUtilApply"] = AnimationUtilApply;
