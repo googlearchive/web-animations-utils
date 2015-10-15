@@ -68,6 +68,10 @@ function AnimationUtilApply(anim, opt_target) {
     for (var x in last) {
       s[x] = last[x];
     }
+    var t = last['transform'];
+    if (t !== undefined) {
+      s['webkitTransform'] = t;
+    }
   });
 }
 
