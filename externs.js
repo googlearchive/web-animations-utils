@@ -45,6 +45,9 @@ Animation.prototype.effect;
 /** @type {number} */
 Animation.prototype.currentTime;
 
+/** @type {number} */
+Animation.prototype.playbackRate;
+
 /** @type {string} */
 Animation.prototype.playState;
 
