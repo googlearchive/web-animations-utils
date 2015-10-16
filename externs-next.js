@@ -33,16 +33,19 @@ AnimationEffectReadOnly.prototype.timing;
 /**
  * @param {Element} target
  * @param {!Array<!Object>} frames
- * @param {number|!Object} options
- * @interface
- * @extends {AnimationEffectReadOnly}
+ * @param {(number|AnimationEffectTimingProperties)=} opt_options
+ * @constructor
+ * @implements {AnimationEffectReadOnly}
  */
-var KeyframeEffect = function(target, frames, options) {};
+var KeyframeEffect = function(target, frames, opt_options) {};
 
 /**
  * @return {!Array<!Object>}
  */
 KeyframeEffect.prototype.getFrames = function() {};
+
+/** @type {!AnimationEffectTiming} */
+KeyframeEffect.prototype.timing;
 
 /** @type {Element} */
 KeyframeEffect.prototype.target;
@@ -52,20 +55,28 @@ KeyframeEffect.prototype.onsample;
 
 /**
  * @param {!Array<!AnimationEffectReadOnly>} children
- * @interface
- * @extends {AnimationEffectReadOnly}
+ * @param {AnimationEffectTimingProperties=} opt_timing
+ * @constructor
+ * @implements {AnimationEffectReadOnly}
  */
-var SequenceEffect = function(children) {};
+var SequenceEffect = function(children, opt_timing) {};
+
+/** @type {!AnimationEffectTiming} */
+SequenceEffect.prototype.timing;
 
 /** @type {!Array<!AnimationEffectReadOnly>} */
 SequenceEffect.prototype.children;
 
 /**
  * @param {!Array<!AnimationEffectReadOnly>} children
- * @interface
- * @extends {AnimationEffectReadOnly}
+ * @param {AnimationEffectTimingProperties=} opt_timing
+ * @constructor
+ * @implements {AnimationEffectReadOnly}
  */
-var GroupEffect = function(children) {};
+var GroupEffect = function(children, opt_timing) {};
+
+/** @type {!AnimationEffectTiming} */
+GroupEffect.prototype.timing;
 
 /** @type {!Array<!AnimationEffectReadOnly>} */
 GroupEffect.prototype.children;

@@ -23,7 +23,7 @@
 
 /**
  * @param {!Array<!Object>} frames
- * @param {undefined|number|!AnimationEffectTiming} opt_options
+ * @param {(number|AnimationEffectTimingProperties)=} opt_options
  * @return {!Animation}
  */
 Element.prototype.animate = function(frames, opt_options) {};
@@ -47,6 +47,20 @@ Animation.prototype.currentTime;
 
 /** @type {string} */
 Animation.prototype.playState;
+
+/**
+ * @typedef {{
+ *   delay: (number|undefined),
+ *   endDelay: (number|undefined),
+ *   fillMode: (string|undefined),
+ *   iterationStart: (number|undefined),
+ *   iterations: (number|undefined),
+ *   duration: (number|string|undefined),
+ *   direction: (string|undefined),
+ *   easing: (string|undefined)
+ * }}
+ */
+var AnimationEffectTimingProperties;
 
 /**
  * @interface
