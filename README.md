@@ -56,7 +56,7 @@ Externs can be used inside the [Closure Compiler](https://developers.google.com/
 For more information, see [Advanced Compilation and Externs](https://developers.google.com/closure/compiler/docs/api-tutorial3).
 
 The utility library provides two externs files that may be used in Closure.
-The `externs.js` defines basic features (matching [web-animations][js]), and the `externs-next.js` defines advanced features (matching [web-animations][js-next]).
+The `externs.js` defines basic features (matching [web-animations][js]), and the `externs-next.js` defines advanced features (matching [web-animations-next][js-next]).
 To use `externs-next.js`, you should include both externs files.
 
 ```bash
