@@ -173,14 +173,19 @@ AnimationUtilTimeline.prototype = {
 
     // Insert into the calls list, maintaining sort order.
     // TODO: binary search would be faster.
-    var i;
-    for (i = 0; i < this.calls_.length; ++i) {
-      var call = this.calls_[i];
+    var low = 0;
+    var high = this.calls_.length - 1;
+    
+    while (low < high) {
+      var mid = Math.floor((low + high) / 2);
+      var call = this.calls_[mid];
       if (call.when > when) {
-        break;
+        high = mid;
+      } else {
+        low = mid+1;
       }
     }
-    this.calls_.splice(i, 0, {when: when, fn: fn});
+    this.calls_.splice(low, 0, {when: when, fn: fn});
 
     var player = this.schedule(when, this.node_, [], 0);
     player.addEventListener('finish', this.hintAtCall_);
