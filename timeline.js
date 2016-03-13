@@ -172,7 +172,6 @@ AnimationUtilTimeline.prototype = {
     var now = this.currentTime;
 
     // Insert into the calls list, maintaining sort order.
-    // TODO: binary search would be faster.
     var low = 0;
     var high = this.calls_.length - 1;
     
