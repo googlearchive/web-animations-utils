@@ -8,12 +8,6 @@
   "keywords": [
     "animations"
   ],
-  "main": [
-    "externs.js",
-    "externs-next.js",
-    "props.js",
-    "timeline.js"
-  ],
   "license": "Apache-2.0",
   "ignore": [
     "**/.*",
