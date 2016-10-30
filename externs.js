@@ -17,7 +17,8 @@
 
 /**
  * @fileoverview Basic externs for the Web Animations API. This is not
- * intended to be exhaustive.
+ * nessecarily exhaustive. For more information, see the spec-
+ *   https://www.w3.org/TR/web-animations/
  * @externs
  */
 
@@ -39,8 +40,28 @@ var Animation = function() {};
  */
 Animation.prototype.cancel = function() {};
 
-/** @type {AnimationEffectReadOnly|undefined} */
-Animation.prototype.effect;
+/**
+ * @return {undefined}
+ */
+Animation.prototype.finish = function() {};
+
+/**
+ * @return {undefined}
+ */
+Animation.prototype.reverse = function() {};
+
+/**
+ * @return {undefined}
+ */
+Animation.prototype.pause = function() {};
+
+/**
+ * @return {undefined}
+ */
+Animation.prototype.play = function() {};
+
+/** @type {number} */
+Animation.prototype.startTime;
 
 /** @type {number} */
 Animation.prototype.currentTime;
@@ -51,7 +72,13 @@ Animation.prototype.playbackRate;
 /** @type {string} */
 Animation.prototype.playState;
 
+/** @type {?function(!Event)} */
+Animation.prototype.oncancel;
+
+/** @type {?function(!Event)} */
+Animation.prototype.onfinish;
 /**
+
  * @typedef {{
  *   delay: (number|undefined),
  *   endDelay: (number|undefined),
