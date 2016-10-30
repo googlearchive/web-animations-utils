@@ -21,7 +21,6 @@
  * @externs
  */
 
-
 /**
  * @interface
  */
@@ -81,3 +80,32 @@ GroupEffect.prototype.timing;
 /** @type {!Array<!AnimationEffectReadOnly>} */
 GroupEffect.prototype.children;
 
+/**
+ * @interface
+ */
+var AnimationTimeline = function() {};
+
+/**
+ * @type {?number}
+ */
+AnimationTimeline.prototype.currentTime;
+
+/**
+ * @param {!AnimationEffectReadOnly} effect
+ * @return {!Animation}
+ */
+AnimationTimeline.prototype.play = function(effect) {};
+
+/**
+ * @interface
+ * @extends {AnimationTimeline}
+ */
+var DocumentTimeline = function() {};
+
+/** @type {AnimationEffectReadOnly|undefined} */
+Animation.prototype.effect;
+
+/**
+ * @type {!DocumentTimeline}
+ */
+Document.prototype.timeline;
