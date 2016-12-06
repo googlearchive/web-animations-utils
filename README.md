@@ -52,19 +52,9 @@ AnimationUtilApply(group);
 
 ### Externs
 
-Externs can be used inside the [Closure Compiler](https://developers.google.com/closure/compiler) to hint at functions provided outside a project's code base, such as third-party libraries or for upcoming APIs such as Web Animations.
-For more information, see [Advanced Compilation and Externs](https://developers.google.com/closure/compiler/docs/api-tutorial3).
+This repository used to contain the Closure Compiler externs for the Web Animations API.
+They have now moved into the [official polyfill repo](https://github.com/web-animations/web-animations-js/tree/dev/externs).
 
-The utility library provides two externs files that may be used in Closure.
-The `externs.js` defines basic features (matching [web-animations][js]), and the `externs-next.js` defines advanced features (matching [web-animations-next][js-next]).
-To use `externs-next.js`, you should include both externs files.
-
-```bash
-java -jar compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS \
-  --js yourcode.js web-animations-utils/externs*
-```
-
-These can be specified with `--externs` or just as source (as both files are annotated with `@externs`).
 
 [polyfill]: https://github.com/web-animations/web-animations-js
 [js]: https://github.com/web-animations/web-animations-js#web-animationsminjs
